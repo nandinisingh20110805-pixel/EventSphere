@@ -16,13 +16,13 @@ export const NotFound = () => {
         </div>
         <div className="flex items-center justify-center gap-3 pt-2">
           <Link to="/">
-            <Button variant="secondary" size="md">
-              <Home className="w-4 h-4" /> Home
+            <Button variant="outline" size="md">
+              <Home className="w-4 m-1 h-4" />Home
             </Button>
           </Link>
           <Link to="/explore">
             <Button variant="primary" size="md">
-              <Compass className="w-4 h-4" /> Browse Gatherings
+              <Compass className="w-4 m-1 h-4" /> Browse Gatherings
             </Button>
           </Link>
         </div>
