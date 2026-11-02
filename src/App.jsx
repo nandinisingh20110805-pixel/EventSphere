@@ -4,6 +4,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import { Route, Routes } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
+import { Home } from './pages/Home'
 import { Footer } from './components/Footer'
 import { NotFound } from './pages/NotFound'
 import { Button } from './components/ui/button'
@@ -12,16 +13,16 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-
+    <div className="min-h-screen flex flex-col bg-[#FAF9F5] text-stone-900 selection:bg-orange-100 selection:text-amber-800">
       <Navbar/> 
-      <Button>hello</Button>
+      <div className='flex-1'>
       <Routes>
-        <Route path='/' element={<h1>Home</h1>}/>
+        <Route path='/' element={<Home/>}/>
         <Route path='*' element={<NotFound/>}/>
       </Routes>
+      </div>
       <Footer/>
-    </>
+    </div>
   )
 }
 
