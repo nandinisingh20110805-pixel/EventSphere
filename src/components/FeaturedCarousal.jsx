@@ -1,25 +1,42 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight, MapPin, Sparkles } from 'lucide-react'
 import { Button } from "./ui/button"
 import { Badge } from "./ui/badge";
 import { Link } from 'react-router-dom'
+import { FormatDate, formatPrice } from '@/lib/utils'
+import { formatDate } from 'date-fns'
 
 
 
 export const FeaturedCarousal = ({featuredEvents}) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const hasEvents = featuredEvents && featuredEvents.length > 0;
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: hasEvents },
-    hasEvents ? [Autoplay({ delay: 4000, stopOnInteraction: false })] : [])
+    hasEvents ? [Autoplay({ 
+      delay: 4000, 
+      stopOnInteraction: false , 
+      stopOnMouseEnter: true,
+      rootNode : (emblaRoot) => emblaRoot.parentElement
+    })] : [])
 
   //scrollprev and scrollnext are methods provided by the useEmblaCaraousel hook(?)
-  const goToPrev = () => emblaApi?.scrollPrev()  
-  const goToNext = () => emblaApi?.scrollNext()
+  const goToPrev = () => {
+    emblaApi?.scrollPrev();
+    // emblaApi.plugins().autoplay.stop();
+    emblaApi.plugins().autoplay.reset()
+  }  
+  const goToNext = () => {
+    emblaApi?.scrollNext()
+    // emblaApi.plugins().autoplay.stop();
+    emblaApi.plugins().autoplay.reset()
+  }
 
   useEffect(() => {
     if (!emblaApi) return
-    emblaApi.plugins().autoplay?.play()
+    //Just an event Listener.
+    emblaApi.on("select", () => setSelectedIndex(emblaApi.selectedScrollSnap()))
   }, [emblaApi])
 
   return (
@@ -33,19 +50,17 @@ export const FeaturedCarousal = ({featuredEvents}) => {
                 key={eventId}
                 className="flex-[0_0_100%] min-w-0 relative aspect-video md:aspect-21/9 lg:aspect-24/9 max-h-125"
               >
-                {/* Background Image with warm rich gradient overlay */}
+  
                 <div className="absolute inset-0 bg-[#161513]">
                   <img
                     src={event.image}
                     alt={event.title}
                     className="w-full h-full object-cover opacity-60 mix-blend-luminosity filter brightness-95"
                   />
-                  {/* Subtle editorial warm gradient */}
                   <div className="absolute inset-0 bg-linear-to-t from-[#141312] via-[#141312]/60 to-transparent" />
                   <div className="absolute inset-0 bg-linear-to-r from-[#141312] via-[#141312]/80 to-transparent" />
                 </div>
-
-                {/* Content Overlay */}
+                
                 <div className="relative h-full flex flex-col justify-end p-6 sm:p-10 lg:p-12 text-white max-w-3xl z-10">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -86,16 +101,14 @@ export const FeaturedCarousal = ({featuredEvents}) => {
                     <div className="flex items-center gap-5 pt-2 text-xs sm:text-sm text-stone-300 font-medium flex-wrap">
                       <span className="flex items-center gap-1.5 text-orange-300 font-semibold">
                         <Calendar className="w-4 h-4" />
-                        {/* {formatEventDate(event.startDate)} */}
-                        {event.startDate}
+                        {FormatDate(event.startDate)}  
                       </span>
                       <span className="flex items-center gap-1.5 text-stone-300">
                         <MapPin className="w-4 h-4 text-stone-400" />
                         {event.venue}, {event.city}
                       </span>
                       <span className="flex items-center gap-1.5 font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/10">
-                        {/* {formatPrice(event.price, event.currency)} */}
-                        {event.price}
+                        {formatPrice(event.price, event.currency)}
                       </span>
                     </div>
 
@@ -141,6 +154,21 @@ export const FeaturedCarousal = ({featuredEvents}) => {
       >
         <ChevronRight className="w-6 h-6" />
       </button>
+
+      <div className="absolute bottom-4 right-6 flex items-center gap-2 z-20">
+        {featuredEvents.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => emblaApi.scrollTo(index)}
+            className={`transition-all rounded-full ${
+              index === selectedIndex
+                ? "w-6 h-2 bg-[#E65100]"
+                : "w-2 h-2 bg-white/50 hover:bg-white/80"
+            }`}
+          />
+        ))}
+      </div>
+
     </div>
     
   )
