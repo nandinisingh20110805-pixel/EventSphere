@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight, MapPin, Sparkles } from 'lucide-react'
-import { Button } from "./ui/button"
-import { Badge } from "./ui/badge";
+import { Button } from "../ui/button"
+import { Badge } from "../ui/badge";
 import { Link } from 'react-router-dom'
 import { FormatDate, formatPrice } from '@/lib/utils'
 import { formatDate } from 'date-fns'

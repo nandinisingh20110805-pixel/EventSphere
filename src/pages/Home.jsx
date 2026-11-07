@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button'
-import { Briefcase, ChevronRight, Cpu, Flame, GraduationCap, Music, Palette, Sparkles, Tag, Trophy } from 'lucide-react'
+import { ArrowRight, Briefcase, ChevronRight, Cpu, Flame, GraduationCap, MapPin, Music, Palette, Sparkles, Tag, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
-import { FeaturedCarousal } from '@/components/FeaturedCarousal'
+import { FeaturedCarousal } from '@/components/events/FeaturedCarousal'
 import axios from 'axios'
+import { EventCard } from '@/components/events/EventCard'
 
 function getCategoryIconComponent(category){
   const icon = category?.icon || "";
@@ -58,10 +59,34 @@ function getCategoryColour(i){
   return colors[i % colors.length];
 }
 
+const HUB_CITIES = [
+  {
+    name: "Bengaluru",
+    label: "Tech & Acoustic Nights",
+    img: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=500&q=80",
+  },
+  {
+    name: "Kolkata",
+    label: "Indie Festivals & Art",
+    img: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=500&q=80",
+  },
+  {
+    name: "Delhi NCR",
+    label: "Conclaves & Founder Pitch",
+    img: "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=500&q=80",
+  },
+  {
+    name: "Pune",
+    label: "Heritage & Code Labs",
+    img: "https://images.unsplash.com/photo-1627916607164-7b20241db935?auto=format&fit=crop&w=500&q=80",
+  },
+];
+
 export const Home = () => {
     const [isLoading , setLoading] = useState(false)
     const [carouselEvents, setCarouselEvents] = useState([]);
     const [categories , setCategories] = useState([]);
+    const [UpcomingEvents , setUpcomingEvents] = useState([]);
 
 
     useEffect(() => {
@@ -96,6 +121,21 @@ export const Home = () => {
         }
       }
       getCategories();
+
+      async function getUpcomingEvents(){
+        try{
+          setLoading(true);
+          let {
+            data : {data}} = await axios.get("https://eventsphere-server-mfdb.onrender.com/api/events?limit=8&sort=startDate&order=asc")
+            setUpcomingEvents(data);
+        }catch{
+
+        }
+        finally{
+          setLoading(false);
+        }
+      }
+      getUpcomingEvents();
     },[])
 
   return (
@@ -200,6 +240,85 @@ export const Home = () => {
         )}
         
       </section>
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#EBE8DF]">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-stone-900 tracking-tight">
+              Upcoming Gatherings
+            </h2>
+            <p className="text-xs text-stone-500">
+              Verified community events happening in the coming days
+            </p>
+          </div>
+          <Link
+            to="/explore"
+            className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-xs rounded-lg font-medium border border-[#CCC8BA] bg-transparent hover:bg-[#F2F1EC] text-[#222]"
+          >
+            <span>View All Events</span>
+            <ArrowRight />
+          </Link>
+        </div>
+        {isLoading ? (<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="p-4 rounded-2xl bg-white border border-[#EBE8DF] animate-pulse space-y-3"
+              >
+                <div className="w-9 h-9 rounded-xl bg-stone-100" />
+                <div className="space-y-1.5">
+                  <div className="h-3.5 bg-stone-100 rounded w-3/4" />
+                  <div className="h-2.5 bg-stone-100 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>):(
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {UpcomingEvents.map((e) => {
+              return <EventCard key={e._id} event={e} />;
+            })}
+          </div>
+          )}
+
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
+        <div>
+          <h2 className="text-xl font-bold text-stone-900 tracking-tight">
+            Explore by Community Hub
+          </h2>
+          <p className="text-xs text-stone-500">
+            Vibrant hubs where local conclaves thrive
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {HUB_CITIES.map((c, i) => (
+            <Link
+              key={i}
+              to="/explore"
+              className="group relative rounded-2xl overflow-hidden aspect-4/3 bg-stone-900 shadow-subtle border border-[#EBE8DF]"
+            >
+              <img
+                src={c.img}
+                alt={c.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <div className="flex items-center gap-1.5 text-orange-400 text-xs font-semibold">
+                  <MapPin />
+                  <span>{c.name}</span>
+                </div>
+                <p className="text-xs text-stone-300 font-medium mt-0.5">
+                  {c.label}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#1C1B18] text-white rounded-3xl p-8 sm:p-12 border border-[#33312B] flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="max-w-xl space-y-3">
