@@ -16,7 +16,7 @@ export const FeaturedCarousal = ({featuredEvents}) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: hasEvents },
     hasEvents ? [Autoplay({ 
       delay: 4000, 
-      stopOnInteraction: false , 
+      stopOnInteraction: false, 
       stopOnMouseEnter: true,
       rootNode : (emblaRoot) => emblaRoot.parentElement
     })] : [])

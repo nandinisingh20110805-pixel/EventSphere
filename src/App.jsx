@@ -8,6 +8,8 @@ import { Home } from './pages/Home'
 import { Footer } from './components/Footer'
 import { NotFound } from './pages/NotFound'
 import { Button } from './components/ui/button'
+import EventDetailsPage from './pages/EventDetailsPage'
+import { Toaster } from 'sonner'
 
 function ScrollToTop(){
   const {pathname } = useLocation();
@@ -26,10 +28,21 @@ function App() {
       <div className='flex-1'>
       <Routes>
         <Route path='/' element={<Home/>}/>
+        <Route path='/events/:slug' element={<EventDetailsPage/>}/>
         <Route path='*' element={<NotFound/>}/>
       </Routes>
       </div>
       <Footer/>
+      <Toaster richColors
+      toastOptions={{
+        style : {
+          borderRadius: "1rem",
+          border: "1px solid #EBE8DF",
+          fontFamily: '"Plus Jakarta Sans", sans-serif',
+          fontSize: "13px",
+        }
+      }}
+      />
     </div>
   )
 }
