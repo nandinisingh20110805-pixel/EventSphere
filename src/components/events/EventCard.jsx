@@ -3,8 +3,13 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { FormatDate } from '@/lib/utils';
 import { formatPrice } from '@/lib/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleSaved } from '@/store/slices/savedSlice';
 export const EventCard = ({event}) => {
-    
+
+  const dispatch = useDispatch();
+  const saved = useSelector((state) => state)
+
   return (
     <Link
       to={`/events/${event.slug}`}
@@ -28,6 +33,11 @@ export const EventCard = ({event}) => {
             </span>
 
             <button
+              onClick={(e) => {
+                //stopped the event bubbling
+                e.preventDefault();
+                dispatch(toggleSaved("dhruv"));
+              }}
               type="button"
               className="pointer-events-auto w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-black/5 flex items-center justify-center hover:bg-white hover:scale-110 active:scale-95 transition-all text-stone-700 hover:text-stone-900 cursor-pointer text-xs"
             >
