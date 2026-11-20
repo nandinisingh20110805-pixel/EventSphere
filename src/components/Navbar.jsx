@@ -2,9 +2,12 @@ import { Bookmark, Calendar, Compass, Menu, PlusCircle, Search, Sparkles, User, 
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { useSelector } from 'react-redux'
 
 export const Navbar = () => {
   const [isMenuOpen , setMenuOpen] = useState(false)
+  const saved = useSelector((state) => state.saved.items);
+  console.log(saved);
   return (
     <div className='sticky top-0 z-40 w-full bg-[#FAF9F5]/90 backdrop-blur-md border-b border-[#EBE8DF]'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-18'>
@@ -47,7 +50,13 @@ export const Navbar = () => {
             >
               <Bookmark className="w-4 h-4" />
               <span>Saved</span>
+              {
+                saved.length > 0 && <span className="w-5 h-5 rounded-full bg-orange-100 text-[#E65100] text-[11px] font-bold flex items-center justify-center">
+               {saved.length}
+              </span>
+              }
             </Link>
+
 
             <Link
               to="/profile"

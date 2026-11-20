@@ -1,8 +1,10 @@
 import { EventReviewSection } from '@/components/events/EventReviewSection';
 import { FormatDate, formatPrice, formatTimeRange, getRemainingDays } from '@/lib/utils';
+import { toggleSaved } from '@/store/slices/savedSlice';
 import axios from 'axios';
 import { Bookmark, Calendar, Clock, MapPin, Share2, Shield, Sparkles, SparklesIcon, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -12,11 +14,23 @@ const Modes = {
   "hybrid" : "Hybrid"
 }
 
+
+export function handleSaves(e,event,dispatch,isSaved){
+    e.preventDefault();
+    dispatch(toggleSaved(event));
+    if(!isSaved) toast.success(`Saved ${event?.title} to your collection!`)
+    else toast.info(`Removed ${event.title} from your collection!`)
+  }
+
 export default function EventDetailsPage() {
   const[isLoading, setLoading] = useState(true);
   const{slug} = useParams();
   const[event , setEvent] = useState(null);
   const[reviews, setReviews] = useState(null);
+  const dispatch = useDispatch();
+
+  const isSaved = useSelector((state) => state.saved.items.some((e) => (e.id || e._id) === (event.id || event._id)));
+
 
   useEffect(()=>{
     async function getEventDetails(){
@@ -40,6 +54,7 @@ export default function EventDetailsPage() {
     navigator.clipboard.writeText(window.location.href);
     toast.success("Link Copied to Clipboard")
   }
+
 
   if(isLoading){
     return(
@@ -83,9 +98,10 @@ export default function EventDetailsPage() {
           <button
             type="button"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
+            onClick={(e) => handleSaves(e,event,dispatch,isSaved)}
           >
-            <span><Bookmark className='w-4 h-4'/></span>
-            <span>Save</span>
+            <span><Bookmark className={`w-4 h-4 ${(isSaved) ? "fill-current" : ''} `}/></span>
+            <span>{(isSaved) ? "Saved" : "Save" }</span>
           </button>
         </div>
       </div>

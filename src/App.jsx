@@ -10,6 +10,7 @@ import { NotFound } from './pages/NotFound'
 import { Button } from './components/ui/button'
 import EventDetailsPage from './pages/EventDetailsPage'
 import { Toaster } from 'sonner'
+import SavedPage from './pages/SavedPage'
 
 function ScrollToTop(){
   const {pathname } = useLocation();
@@ -30,6 +31,7 @@ function App() {
         <Route path='/' element={<Home/>}/>
         <Route path='/events/:slug' element={<EventDetailsPage/>}/>
         <Route path='*' element={<NotFound/>}/>
+        <Route path='/favorites' element={<SavedPage/>}/>
       </Routes>
       </div>
       <Footer/>

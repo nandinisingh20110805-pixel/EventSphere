@@ -5,10 +5,17 @@ import { FormatDate } from '@/lib/utils';
 import { formatPrice } from '@/lib/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleSaved } from '@/store/slices/savedSlice';
+import { handleSaves } from '@/pages/EventDetailsPage';
 export const EventCard = ({event}) => {
 
   const dispatch = useDispatch();
-  const saved = useSelector((state) => state)
+  const isSaved = useSelector((state) => state.saved.items.some((e) => (e.id || e._id) === (event.id || event._id)));
+  // const saved = useSelector((state) => state)
+
+  // function handleSaved(e){
+  //   e.preventDefault();
+  //   dispatch(toggleSaved(event))
+  // }
 
   return (
     <Link
@@ -33,15 +40,16 @@ export const EventCard = ({event}) => {
             </span>
 
             <button
-              onClick={(e) => {
-                //stopped the event bubbling
-                e.preventDefault();
-                dispatch(toggleSaved("dhruv"));
-              }}
+              onClick={(e) => handleSaves(e,event,dispatch,isSaved) }
               type="button"
-              className="pointer-events-auto w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-black/5 flex items-center justify-center hover:bg-white hover:scale-110 active:scale-95 transition-all text-stone-700 hover:text-stone-900 cursor-pointer text-xs"
+              className={`pointer-events-auto w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-black/5 flex items-center justify-center
+                ${
+                  (!isSaved) ? "hover:bg-white hover:scale-110 active:scale-95 transition-all text-stone-700 hover:text-stone-900 cursor-pointer text-xs" :
+                  "bg-orange-50 border-orange-200 text-orange-400"
+                }
+                 `}
             >
-              <Bookmark />
+              <Bookmark className={`w-4 h-4 ${(!isSaved) ? "text-stone-500" : "fill-orange-400"}`} />
             </button>
           </div>
         </div>
